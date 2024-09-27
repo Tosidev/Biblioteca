@@ -1,0 +1,44 @@
+@model Biblioteca.Models.Livro
+
+@{
+    ViewData["Title"] = "Adicionar Livro";
+}
+
+<h1>Adicionar Livro</h1>
+
+<form asp-action="Create" method="post">
+    <div class="form-group">
+        <label asp-for="Titulo" class="control-label"></label>
+        <input asp-for="Titulo" class="form-control" />
+        <span asp-validation-for="Titulo" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="DataPublicacao" class="control-label"></label>
+        <input asp-for="DataPublicacao" class="form-control" type="date" />
+        <span asp-validation-for="DataPublicacao" class="text-danger"></span>
+    </div>
+    
+    <!-- Campo para inserir o autor -->
+    <div class="form-group">
+        <label for="NovoAutor" class="control-label">Novo Autor</label>
+        <input type="text" id="NovoAutor" name="NovoAutor" class="form-control" />        
+    </div>
+
+    <!-- Campo para inserir o assunto -->
+    <div class="form-group">
+        <label for="NovoAssunto" class="control-label">Novo Assunto</label>
+        <input type="text" id="NovoAssunto" name="NovoAssunto" class="form-control" />        
+    </div>
+
+    <div class="form-group">
+        <label for="FormaCompra" class="control-label">Forma de Compra</label>
+        <input id="FormaCompra" name="FormaCompra" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="Preco" class="control-label">Preço</label>
+        <input id="Preco" name="Preco" class="form-control" type="text" step="0.01" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Salvar</button>
+    <a asp-action="Index" class="btn btn-secondary">Voltar</a>
+</form>

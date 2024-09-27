@@ -1,0 +1,43 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+/* Novo estilo para a tabela */
+.table tbody tr:nth-child(odd) {
+  background-color: #f0f8ff; /* Azul claro para linhas ímpares */
+}
+
+.table tbody tr:nth-child(even) {
+  background-color: #f8f9fa; /* Cinza claro para linhas pares */
+}
+
+/* Novo estilo para o header com tom de cinza mais escuro */
+.header-bg {
+  background-color: #dcdcdc; /* Tom mais escuro de cinza */
+}
+
+/* Estilo para o título 'Biblioteca' em negrito */
+.navbar-brand {
+  font-weight: bold;
+}
+
+

@@ -1,0 +1,19 @@
+@model Biblioteca.Models.Livro
+
+@{
+    ViewData["Title"] = "Detalhes do Livro";
+}
+
+<h1>Detalhes do Livro</h1>
+
+<div>
+    <h4>@Model.Titulo</h4>
+    <p><strong>Autor:</strong> @Model.LivroAutores.FirstOrDefault()?.Autor.Nome</p>
+    <p><strong>Assunto:</strong> @Model.LivroAssuntos.FirstOrDefault()?.Assunto.Descricao</p>
+    <p><strong>Data de Publicação:</strong> @Model.DataPublicacao.ToString("dd/MM/yyyy")</p>
+    <p><strong>Forma de Compra:</strong> @Model.Precos.FirstOrDefault()?.FormaCompra</p>
+    <p><strong>Preço:</strong> @Model.Precos.FirstOrDefault()?.Valor.ToString("C2")</p>
+</div>
+
+<a asp-action="Edit" asp-route-id="@Model.LivroId" class="btn btn-primary">Editar</a>
+<a asp-action="Index" class="btn btn-secondary">Voltar</a>

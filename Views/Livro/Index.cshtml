@@ -1,0 +1,66 @@
+@model List<Biblioteca.Data.VwLivrosCompleto>
+
+@{
+    ViewData["Title"] = "Livros";
+    Layout = "_Layout";
+}
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <h1>Livros</h1>
+
+    <!-- Referência ao CSS do Bootstrap ou site.css da pasta wwwroot -->
+    <link rel="stylesheet" href="~/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+
+<body>
+    <p>
+        <a href="@Url.Action("Create")" class="btn btn-primary">Adicionar Livro</a>
+        <a href="@Url.Action("GerarRelatorioPdf")" class="btn btn-primary">Gerar Relatório PDF</a>
+    </p>
+
+    @if (Model != null && Model.Any())
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Título</th>
+                    <th>Autor</th>
+                    <th>Assunto</th>
+                    <th>Data de Publicação</th>
+                    <th>Forma de Compra</th>
+                    <th>Preço</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var livro in Model)
+                {
+                    <tr>
+                        <td>@livro.Titulo</td>
+                        <td>@livro.Autor</td>
+                        <td>@livro.Assunto</td>
+                        <td>@livro.Publicacao</td>
+                        <td>@livro.Forma_Compra</td>
+                        <td>@livro.Preco.ToString("C")</td> <!-- Formatação de moeda -->
+                        <td>
+                            <a href="@Url.Action("Edit", new { id = livro.LivroId })">Editar</a> |
+                            <a href="@Url.Action("Details", new { id = livro.LivroId })">Detalhes</a> |
+                            <a href="@Url.Action("Delete", new { id = livro.LivroId })">Excluir</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>Nenhum livro encontrado.</p>
+    }
+
+    <!-- Referência ao JS do Bootstrap ou outro JS -->
+    <script src="~/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js"></script>
+</body>

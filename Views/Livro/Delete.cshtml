@@ -1,0 +1,23 @@
+@model Biblioteca.Models.Livro
+
+@{
+    ViewData["Title"] = "Excluir Livro";
+}
+
+<h1>Excluir Livro</h1>
+
+<h3>Tem certeza de que deseja excluir este livro?</h3>
+<div>
+    <h4>@Model.Titulo</h4>        
+    <p><strong>Autor:</strong> @Model.LivroAutores.FirstOrDefault()?.Autor.Nome</p>
+    <p><strong>Assunto:</strong> @Model.LivroAssuntos.FirstOrDefault()?.Assunto.Descricao</p>
+    <p><strong>Data de Publicação:</strong> @Model.DataPublicacao.ToString("dd/MM/yyyy")</p>
+    <p><strong>Forma de Compra:</strong> @Model.Precos.FirstOrDefault()?.FormaCompra</p>
+    <p><strong>Preço:</strong> @Model.Precos.FirstOrDefault()?.Valor.ToString("C2")</p>
+</div>
+
+<form asp-action="Delete">
+    <input type="hidden" asp-for="LivroId" />
+    <button type="submit" class="btn btn-danger">Excluir</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>
