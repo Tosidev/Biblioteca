@@ -23,12 +23,6 @@ namespace Biblioteca.Controllers
             _context = context;
         }
 
-        // Action que carrega a view Index.cshtml em Views/Livros // Comentado apenas para entendimento do comportamento public async Task<IActionResult> Index()
-        /*public IActionResult Index()
-        {
-            return View();  // Isso carregará Views/Livros/Index.cshtml por padrão
-        }*/
-
         // GET: Livro
         public async Task<IActionResult> Index()
         {
@@ -39,17 +33,15 @@ namespace Biblioteca.Controllers
                 return NotFound("Nenhum registro encontrado.");
             }
 
-            // Retorna a view com os dados
+            // Retorna a view com todos os dados
             return View(livrosCompletos);
         }
-
 
         // GET: Livro/Create
         public IActionResult Create()
         {
             return View();
         }
-
 
         // POST: Livro/Create
         [HttpPost]
@@ -113,99 +105,97 @@ namespace Biblioteca.Controllers
             return View(livro);
         }
 
-
-    // GET: Livro/Edit/5
-    public async Task<IActionResult> Edit(int? id)
-    {
-        if (id == null)
+        // GET: Livro/Edit/5
+        public async Task<IActionResult> Edit(int? id)
         {
-            return NotFound();
-        }
-
-        // Carregar o livro com todas as informações relacionadas, incluindo os preços
-        var livro = await _context.Livros
-            .Include(l => l.Precos) // Incluindo os preços na consulta
-            .Include(l => l.LivroAutores)
-                .ThenInclude(la => la.Autor)
-            .Include(l => l.LivroAssuntos)
-                .ThenInclude(la => la.Assunto)            
-            .FirstOrDefaultAsync(l => l.LivroId == id);
-
-        if (livro == null)
-        {
-            return NotFound();
-        }
-
-        // Verificar se há preços e definir os valores em ViewData
-        ViewData["FormaCompra"] = livro.Precos.FirstOrDefault()?.FormaCompra;
-        ViewData["Preco"] = livro.Precos.FirstOrDefault()?.Valor;
-
-        return View(livro);
-    }
-
-
-
-    // POST: Livro/Edit/5
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int id, Livro livro, string AutorNome, string AssuntoDescricao, string FormaCompra, string Preco)
-    {
-        if (id != livro.LivroId)
-        {
-            return NotFound();
-        }
-
-        if (ModelState.IsValid)
-        {
-            try
+            if (id == null)
             {
-                // Atualizar o preço e forma de compra
-                var precoExistente = _context.Precos.FirstOrDefault(p => p.LivroId == livro.LivroId);
-                if (precoExistente != null)
-                {
-                    precoExistente.FormaCompra = FormaCompra;
-                    precoExistente.Valor = decimal.Parse(Preco); // Converter para decimal
-                }
-                else
-                {
-                    livro.Precos = new List<Preco>
-                    {
-                        new Preco
-                        {
-                            LivroId = livro.LivroId,
-                            FormaCompra = FormaCompra,
-                            Valor = decimal.Parse(Preco) // Converter para decimal
-                        }
-                    };
-                }
+                return NotFound();
+            }
 
-                // Atualizar o assunto
-                var assuntoExistente = _context.LivroAssunto.FirstOrDefault(a => a.LivroId == livro.LivroId);
-                if (assuntoExistente != null)
+            // Carregar o livro com todas as informações relacionadas, incluindo os preços
+            var livro = await _context.Livros
+                .Include(l => l.Precos) 
+                .Include(l => l.LivroAutores)
+                    .ThenInclude(la => la.Autor)
+                .Include(l => l.LivroAssuntos)
+                    .ThenInclude(la => la.Assunto)            
+                .FirstOrDefaultAsync(l => l.LivroId == id);
+
+            if (livro == null)
+            {
+                return NotFound();
+            }
+
+            // Verificar se há preços e definir os valores em ViewData
+            ViewData["FormaCompra"] = livro.Precos.FirstOrDefault()?.FormaCompra;
+            ViewData["Preco"] = livro.Precos.FirstOrDefault()?.Valor;
+
+            return View(livro);
+        }
+
+        // POST: Livro/Edit/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, Livro livro, string AutorNome, string AssuntoDescricao, string FormaCompra, string Preco)
+        {
+            if (id != livro.LivroId)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                // Este try-catch utilizado para capturar erros específicos durante a atualização do banco de dados e lidar com possíveis problemas de concorrência
+                try 
                 {
-                    // Atualizar a descrição do assunto existente
-                    var assunto = _context.Assuntos.FirstOrDefault(a => a.AssuntoId == assuntoExistente.AssuntoId);
-                    if (assunto != null)
+                    // Atualizar o preço e forma de compra
+                    var precoExistente = _context.Precos.FirstOrDefault(p => p.LivroId == livro.LivroId);
+                    if (precoExistente != null)
                     {
-                        assunto.Descricao = AssuntoDescricao;
+                        precoExistente.FormaCompra = FormaCompra;
+                        precoExistente.Valor = decimal.Parse(Preco); // Converter o valor do campo para decimal
                     }
-                }
-                else
-                {
-                    // Criar um novo assunto e relacionar com o livro
-                    var novoAssunto = new Assunto { Descricao = AssuntoDescricao };
-                    _context.Assuntos.Add(novoAssunto);
-                    await _context.SaveChangesAsync(); // Salvar para obter o ID do novo assunto
-
-                    livro.LivroAssuntos = new List<LivroAssunto>
+                    else
                     {
-                        new LivroAssunto
+                        livro.Precos = new List<Preco>
                         {
-                            LivroId = livro.LivroId,
-                            AssuntoId = novoAssunto.AssuntoId
+                            new Preco
+                            {
+                                LivroId = livro.LivroId,
+                                FormaCompra = FormaCompra,
+                                Valor = decimal.Parse(Preco) // Converter o valor do campo para decimal
+                            }
+                        };
+                    }
+
+                    // Atualizar o assunto
+                    var assuntoExistente = _context.LivroAssunto.FirstOrDefault(a => a.LivroId == livro.LivroId);
+                    if (assuntoExistente != null)
+                    {
+                        // Atualizar a descrição do assunto existente
+                        var assunto = _context.Assuntos.FirstOrDefault(a => a.AssuntoId == assuntoExistente.AssuntoId);
+                        if (assunto != null)
+                        {
+                            assunto.Descricao = AssuntoDescricao;
                         }
-                    };
-                }
+                    }
+                    else
+                    {
+                        // Criar um novo assunto e relacionar com o livro
+                        var novoAssunto = new Assunto { Descricao = AssuntoDescricao };
+                        _context.Assuntos.Add(novoAssunto);
+                        await _context.SaveChangesAsync(); // Salvar as informações para obter o ID do novo assunto
+
+                        livro.LivroAssuntos = new List<LivroAssunto>
+                        {
+                            new LivroAssunto
+                            {
+                                LivroId = livro.LivroId,
+                                AssuntoId = novoAssunto.AssuntoId
+                            }
+                        };
+                    }
 
                     // Atualizar o autor
                     var autorExistente = _context.LivroAutor.FirstOrDefault(a => a.LivroId == livro.LivroId);
@@ -223,7 +213,7 @@ namespace Biblioteca.Controllers
                         // Criar um novo autor e relacionar com o livro
                         var novoAutor = new Autor { Nome = AutorNome };
                         _context.Autores.Add(novoAutor);
-                        await _context.SaveChangesAsync(); // Salvar para obter o ID do novo autor
+                        await _context.SaveChangesAsync(); // Salvar as informações para obter o ID do novo autor
 
                         livro.LivroAutores = new List<LivroAutor>
                         {
@@ -235,30 +225,28 @@ namespace Biblioteca.Controllers
                         };
                     }
 
-                _context.Update(livro);
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!_context.Livros.Any(e => e.LivroId == livro.LivroId))
-                {
-                    return NotFound();
+                    _context.Update(livro);
+                    await _context.SaveChangesAsync();
                 }
-                else
+                catch (DbUpdateConcurrencyException)
                 {
-                    throw;
+                    if (!_context.Livros.Any(e => e.LivroId == livro.LivroId))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw; // Utilizado para relançar a exceção se não for uma situação de ausência do registro. (Situção crítica durante o desenvolvimento)
+                    }
                 }
+                return RedirectToAction(nameof(Index));
             }
-            return RedirectToAction(nameof(Index));
+
+            // Manter o valor do preço no ViewData em caso de erro
+            ViewData["Preco"] = Preco;
+            ViewData["PrecoError"] = "Por favor, insira um valor válido.";
+            return View(livro);
         }
-
-        // Manter o valor do preço no ViewData em caso de erro
-        ViewData["Preco"] = Preco;
-        ViewData["PrecoError"] = "Por favor, insira um valor válido.";
-        return View(livro);
-    }
-
-
 
         // GET: Livro/Delete/5
         public async Task<IActionResult> Delete(int? id)
@@ -267,8 +255,7 @@ namespace Biblioteca.Controllers
             {
                 return NotFound();
             }
-
-            //var livro = await _context.Livros.FirstOrDefaultAsync(m => m.LivroId == id);
+            
             var livro = await _context.Livros
                 .Include(l => l.LivroAutores)
                 .ThenInclude(la => la.Autor)
@@ -335,14 +322,14 @@ namespace Biblioteca.Controllers
             return View(livro);
         }
 
-
         // Método para gerar o relatório em PDF
         public async Task<IActionResult> GerarRelatorioPdf()
         {
                 // Definir o caminho para salvar o arquivo PDF no desktop com um identificador exclusivo
                 string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-                string pdfPath = Path.Combine(desktopPath, $"RelatorioAutorLivros_{DateTime.Now:yyyyMMdd_HHmmss}.pdf");
+                string pdfPath = Path.Combine(desktopPath, $"RelatorioAutorLivros_{DateTime.Now:yyyyMMdd_HHmmss}.pdf"); // (Desenvolvimento crítico, cria o pdf mas dá erro)
 
+                // Este try-catch utilizado para capturar capturar quaisquer exceções que possam ocorrer durante o processo de geração do PDF e retornar uma mensagem de erro amigável caso algo dê errado
                 try
                 {
                     // Criar o PDF usando iTextSharp

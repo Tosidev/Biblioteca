@@ -15,10 +15,10 @@ namespace Biblioteca.Models
 
         public DateTime DataPublicacao { get; set; }
 
-        // Relacionamento muitos-para-muitos com Assunto via LivroAssunto
+        // Relacionamento N:N (muitos-para-muitos) com Assunto via LivroAssunto
         public ICollection<LivroAssunto> LivroAssuntos { get; set; } = new List<LivroAssunto>();
 
-        // Propriedade de navegação para o relacionamento muitos-para-muitos com Autor
+        // Propriedade de navegação para o relacionamento N:N (muitos-para-muitos) com Autor
         public ICollection<LivroAutor> LivroAutores { get; set; } = new List<LivroAutor>();
 
         // Adicionar a coleção de preços

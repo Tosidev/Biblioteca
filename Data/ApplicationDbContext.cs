@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Biblioteca.Models;
 
-namespace Biblioteca.Data  // Coloque o namespace de volta para Biblioteca.Data
+namespace Biblioteca.Data  
 {
     public class ApplicationDbContext : DbContext
     {
@@ -16,14 +16,14 @@ namespace Biblioteca.Data  // Coloque o namespace de volta para Biblioteca.Data
         public DbSet<Autor> Autores { get; set; }
         public DbSet<LivroAutor> LivroAutor { get; set; }
         public DbSet<Preco> Precos { get; set; }
-        public DbSet<VwLivrosCompleto> VwLivrosCompleto { get; set; } // Adicionando a *view* no contexto
-        public DbSet<VwLivrosCompleto> VwAutorLivros { get; set; } // Adicionando a *view* no contexto
+        public DbSet<VwLivrosCompleto> VwLivrosCompleto { get; set; } 
+        public DbSet<VwLivrosCompleto> VwAutorLivros { get; set; } 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            // Configurar a chave composta para a tabela de junção LivroAssunto
+            // Configurar a chave composta para a tabela de junção LivroAssunto sendo necessária para representar os relacionamentos N:N (muitos-para-muitos)
             modelBuilder.Entity<LivroAssunto>()
                 .HasKey(la => new { la.LivroId, la.AssuntoId });
 
@@ -37,7 +37,7 @@ namespace Biblioteca.Data  // Coloque o namespace de volta para Biblioteca.Data
                 .WithMany(a => a.LivroAssuntos)
                 .HasForeignKey(la => la.AssuntoId);
 
-            // Configurar a chave composta para a tabela de junção LivroAutor
+            // Configurar a chave composta para a tabela de junção LivroAutor sendo necessária para representar os relacionamentos N:N (muitos-para-muitos)
             modelBuilder.Entity<LivroAutor>()
                 .HasKey(la => new { la.LivroId, la.AutorId });
 
@@ -51,18 +51,16 @@ namespace Biblioteca.Data  // Coloque o namespace de volta para Biblioteca.Data
                 .WithMany(a => a.LivrosAutores)
                 .HasForeignKey(la => la.AutorId);
 
-            // Configurar VwLivrosCompleto como uma entidade sem chave
+            // Configurar VwLivrosCompleto como uma entidade sem chave por representar uma view do banco de dados
             modelBuilder.Entity<VwLivrosCompleto>().HasNoKey().ToView("vw_LivrosCompleto");
 
-            // Configurar VwAutorLivros como uma entidade sem chave
+            // Configurar VwAutorLivros como uma entidade sem chave por representar uma view do banco de dados
             modelBuilder.Entity<VwAutorLivros>().HasNoKey().ToView("vw_AutorLivros");
 
             modelBuilder.Entity<VwLivrosCompleto>()
                 .Property(v => v.Preco)
                 .HasColumnType("decimal(18,2)");
         }
-
-
     }
 
     [Keyless]
@@ -85,7 +83,5 @@ namespace Biblioteca.Data  // Coloque o namespace de volta para Biblioteca.Data
         public required string Autor { get; set; }
         public required string Assunto { get; set; }
         public required string Publicacao { get; set; } 
-
     }
-
 }

@@ -6,7 +6,7 @@ public class VwLivrosCompleto
     public string Titulo { get; set; }
     public string Autor { get; set; }
     public string Assunto { get; set; }
-    public DateTime Publicacao { get; set; } // Mudança de string para DateTime
+    public DateTime Publicacao { get; set; } 
     public string Forma_Compra { get; set; }
     public decimal Preco { get; set; }
 }

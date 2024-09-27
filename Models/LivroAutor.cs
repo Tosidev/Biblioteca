@@ -4,10 +4,10 @@ namespace Biblioteca.Models
     {
         // Chave estrangeira para Livro
         public int LivroId { get; set; }
-        public Livro Livro { get; set; } = null!;  // Marcado como não nulo
+        public Livro Livro { get; set; } = null!; 
 
         // Chave estrangeira para Autor
         public int AutorId { get; set; }
-        public Autor Autor { get; set; } = null!;  // Marcado como não nulo
+        public Autor Autor { get; set; } = null!; 
     }
 }

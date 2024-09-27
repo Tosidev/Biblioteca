@@ -11,8 +11,8 @@ namespace Biblioteca.Models
         [StringLength(100)]
         public string Nome { get; set; } = string.Empty;
 
-        // Relacionamento muitos-para-muitos com Livro via LivroAutor
-        public ICollection<LivroAutor> LivrosAutores { get; set; } = new List<LivroAutor>(); // Defina e inicialize aqui
+        // Relacionamento N:N (muitos-para-muitos) com Livro via LivroAutor
+        public ICollection<LivroAutor> LivrosAutores { get; set; } = new List<LivroAutor>(); 
 
         // Construtor padrão para garantir que a lista seja inicializada
         public Autor()
