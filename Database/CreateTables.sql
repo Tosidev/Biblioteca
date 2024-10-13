@@ -1,17 +1,17 @@
 -- Criação das tabelas principais
 CREATE TABLE Autores (
     AutorId INT PRIMARY KEY IDENTITY(1,1),
-    Nome NVARCHAR(200) NOT NULL
+    Nome NVARCHAR(40) NOT NULL
 );
 
 CREATE TABLE Assuntos (
     AssuntoId INT PRIMARY KEY IDENTITY(1,1),
-    Descricao NVARCHAR(200) NOT NULL
+    Descricao NVARCHAR(20) NOT NULL
 );
 
 CREATE TABLE Livros (
     LivroId INT PRIMARY KEY IDENTITY(1,1),
-    Titulo NVARCHAR(400) NOT NULL,
+    Titulo NVARCHAR(40) NOT NULL,
     DataPublicacao DATETIME
 );
 

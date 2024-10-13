@@ -9,7 +9,7 @@ namespace Biblioteca.Models
         public int AssuntoId { get; set; }
 
         [Required]
-        [StringLength(100)]
+        [StringLength(20)]
         public string Descricao { get; set; } = string.Empty;
 
         // Inicializar a coleção para evitar problemas de referência nula

@@ -8,7 +8,7 @@ namespace Biblioteca.Models
         public int AutorId { get; set; }
 
         [Required]
-        [StringLength(100)]
+        [StringLength(40)]
         public string Nome { get; set; } = string.Empty;
 
         // Relacionamento N:N (muitos-para-muitos) com Livro via LivroAutor

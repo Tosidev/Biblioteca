@@ -10,7 +10,7 @@ namespace Biblioteca.Models
         public int LivroId { get; set; }
 
         [Required]
-        [StringLength(200)]
+        [StringLength(40)]
         public required string Titulo { get; set; }
 
         public DateTime DataPublicacao { get; set; }
