@@ -60,4 +60,13 @@
 
     <script src="~/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js"></script>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <script type="text/javascript">
+            showSuccessToast('@TempData["SuccessMessage"]');
+        </script>
+    }
+
+
 </body>

@@ -99,6 +99,8 @@ namespace Biblioteca.Controllers
                 _context.Add(livro);
                 await _context.SaveChangesAsync();
 
+                TempData["SuccessMessage"] = "Livro incluído com sucesso!";
+
                 return RedirectToAction(nameof(Index));
             }
 
@@ -239,6 +241,9 @@ namespace Biblioteca.Controllers
                         throw; // Utilizado para relançar a exceção se não for uma situação de ausência do registro. (Situção crítica durante o desenvolvimento)
                     }
                 }
+                
+                TempData["SuccessMessage"] = "Livro editado com sucesso!";
+                
                 return RedirectToAction(nameof(Index));
             }
 
@@ -296,6 +301,8 @@ namespace Biblioteca.Controllers
             // Remover o livro
             _context.Livros.Remove(livro);
             await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Livro excluído com sucesso!";
 
             return RedirectToAction(nameof(Index));
         }

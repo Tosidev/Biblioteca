@@ -50,3 +50,8 @@ body {
   display: block; /* Certifica-se de que a label ocupe uma linha inteira */
 }
 
+/* Estilizando a primeira opção de todos os dropdowns (select) */
+select option:first-child {
+  font-style: italic;
+}
+
