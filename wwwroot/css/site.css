@@ -40,4 +40,13 @@ body {
   font-weight: bold;
 }
 
+/* Estilo global para os formulários */
+.form-group {
+  margin-bottom: 20px; /* Espaçamento entre os campos */
+}
+
+.form-group label {
+  font-weight: bold; /* Labels em negrito */
+  display: block; /* Certifica-se de que a label ocupe uma linha inteira */
+}
 
