@@ -71,7 +71,7 @@ namespace Biblioteca.Data
         public required string Autor { get; set; }
         public required string Assunto { get; set; }
         public required string Publicacao { get; set; } 
-        public required string Forma_Compra { get; set; }
+        public required string FormaCompra { get; set; }
         public required decimal Preco { get; set; }
     }
 

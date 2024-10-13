@@ -6,7 +6,7 @@ SELECT
     a.Nome AS Autor,
     s.Descricao AS Assunto,
     CONVERT(VARCHAR(10), l.DataPublicacao, 120) AS Publicacao,  -- Formatar a data para YYYY-MM-DD
-    p.FormaCompra AS Forma_Compra,
+    p.FormaCompra AS FormaCompra,
     p.Valor AS Preco
 FROM 
     Livros l
