@@ -31,8 +31,14 @@
 
     <div class="form-group">
         <label for="FormaCompra" class="control-label">Forma de Compra</label>
-        <input id="FormaCompra" name="FormaCompra" class="form-control" />
+        <select id="FormaCompra" name="FormaCompra" class="form-control">
+            <option value="">Selecione a forma de compra</option>
+            <option value="Online">Online</option>
+            <option value="Loja Física">Loja Física</option>
+            <option value="Feira de Livros">Feira de Livros</option>
+        </select>
     </div>
+
     <div class="form-group">
         <label for="Preco" class="control-label">Preço</label>
         <input id="Preco" name="Preco" class="form-control" type="text" step="0.01" />
