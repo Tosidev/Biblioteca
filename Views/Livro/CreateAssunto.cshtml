@@ -1,0 +1,57 @@
+@{
+    ViewData["Title"] = "Cadastrar Assunto";
+    var assuntos = ViewData["Assuntos"] as List<string> ?? new List<string>(); // Garante que assuntos nunca será nulo
+}
+
+<h1>Cadastrar Assunto</h1>
+
+<!-- Exibir mensagem de sucesso -->
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+<form asp-action="CreateAssunto" method="post">
+    <div class="form-group">
+        <label for="NovoAssunto" class="control-label">Nome do Assunto</label>
+        <input type="text" id="NovoAssunto" name="NovoAssunto" class="form-control" />
+
+        <!-- Exibir a mensagem de erro manualmente com verificação para evitar nulidade -->
+        @if (ViewData.ModelState.ContainsKey("NovoAssunto") && ViewData.ModelState["NovoAssunto"].Errors.Count > 0)
+        {
+            <span class="text-danger">@ViewData.ModelState["NovoAssunto"].Errors[0].ErrorMessage</span>
+        }
+    </div>
+
+    <button type="submit" class="btn btn-primary">Salvar</button>
+    <a asp-action="Index" class="btn btn-secondary">Voltar</a>
+</form>
+
+<hr />
+
+<!-- Exibir a tabela com todos os assuntos já cadastrados -->
+<h2>Assuntos Cadastrados</h2>
+@if (assuntos.Any()) // Verifica se há assuntos antes de renderizar a tabela
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nome do Assunto</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var assunto in assuntos)
+            {
+                <tr>
+                    <td>@assunto</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>Nenhum assunto cadastrado.</p>
+}

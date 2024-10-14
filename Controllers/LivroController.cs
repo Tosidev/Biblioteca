@@ -467,6 +467,51 @@ namespace Biblioteca.Controllers
             return View();
         }
 
+        // GET: Assunto/CreateAssunto
+        // Novo método para exibir a página de cadastro de assuntos
+        public IActionResult CreateAssunto()
+        {
+            // Carregar todos os assuntos para exibição na tabela
+            var assuntos = _context.Assuntos.Select(a => a.Descricao).ToList();
+            ViewData["Assuntos"] = assuntos;
+
+            return View();
+        }
+
+        // POST: Assunto/CreateAssunto
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateAssunto(string NovoAssunto)
+        {
+            // Verifique se o assunto já existe
+            var assuntoExistente = _context.Assuntos.FirstOrDefault(a => a.Descricao == NovoAssunto);
+
+            if (assuntoExistente != null)
+            {
+                // Mensagem de erro se o assunto já existir
+                ModelState.AddModelError("DuplicatedAssunto", "Esse assunto já existe.");
+                ViewData["Assuntos"] = _context.Assuntos.Select(a => a.Descricao).ToList();
+                return View();
+            }
+
+            if (ModelState.IsValid)
+            {
+                // Criar e salvar o novo assunto
+                var novoAssunto = new Assunto
+                {
+                    Descricao = NovoAssunto
+                };
+                _context.Assuntos.Add(novoAssunto);
+                await _context.SaveChangesAsync();
+
+                TempData["SuccessMessage"] = "Assunto cadastrado com sucesso!";
+                return RedirectToAction(nameof(CreateAssunto));
+            }
+
+            ViewData["Assuntos"] = _context.Assuntos.Select(a => a.Descricao).ToList();
+            return View();
+        }
+
     
     }
 
