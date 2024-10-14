@@ -2,6 +2,8 @@
 
 @{
     ViewData["Title"] = "Editar Livro";
+    var autores = ViewData["Autores"] as List<string> ?? new List<string>(); // Garante que autores nunca será nulo
+    var autorAtual = ViewData["AutorAtual"] as string;
 }
 
 <h1>Editar Livro</h1>
@@ -26,6 +28,18 @@
         <label>Autor</label>
         <input name="AutorNome" value="@Model.LivroAutores.FirstOrDefault()?.Autor?.Nome" class="form-control" />
     </div>
+
+    <!--<div class="form-group">
+        <label for="AutorNome" class="control-label">Nome do Autor</label>
+        <select id="AutorNome" name="NovoAutor" class="form-control">            
+            <option value="">@ViewData["AutorAtual"]</option>
+            @foreach (var autor in autores)
+            {
+                var isSelected = autor == autorAtual ? "selected=\"selected\"" : "";
+                <option value="@autor">@autor</option>
+            }
+        </select>
+    </div>-->
 
     <div class="form-group">
         <label>Assunto</label>

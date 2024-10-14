@@ -2,6 +2,8 @@
 
 @{
     ViewData["Title"] = "Adicionar Livro";
+    var autores = ViewData["Autores"] as List<string> ?? new List<string>(); // Garante que autores não seja nulo
+    var assuntos = ViewData["Assuntos"] as List<string> ?? new List<string>(); // Corrige o nome da variável para "assuntos"
 }
 
 <h1>Adicionar Livro</h1>
@@ -19,15 +21,28 @@
         <span asp-validation-for="DataPublicacao" class="text-danger"></span>
     </div>
     
-    <div class="form-group">
+    <!--<div class="form-group">
         <label for="NovoAutor" class="control-label">Novo Autor</label>
         <input type="text" id="NovoAutor" name="NovoAutor" class="form-control" />        
-    </div>
-    
+    </div>-->
+
     <div class="form-group">
-        <label for="NovoAssunto" class="control-label">Novo Assunto</label>
-        <input type="text" id="NovoAssunto" name="NovoAssunto" class="form-control" />        
+        <label for="AutorNome" class="control-label">Nome do Autor</label>
+        <input type="text" id="AutorNome" name="NovoAutor" class="form-control" />
+    </div>    
+ 
+    <div class="form-group">
+    <label for="NovoAssunto" class="control-label">Assunto</label>
+        <!--<input type="text" id="NovoAssunto" name="NovoAssunto" class="form-control" />-->
+        <select id="NovoAssunto" name="NovoAssunto" class="form-control">
+            <option value="">Selecione um assunto</option>
+            @foreach (var assunto in assuntos)
+            {
+                <option value="@assunto">@assunto</option>
+            }
+        </select>
     </div>
+
 
     <div class="form-group">
         <label for="FormaCompra" class="control-label">Forma de Compra</label>
@@ -47,3 +62,28 @@
     <button type="submit" class="btn btn-primary">Salvar</button>
     <a asp-action="Index" class="btn btn-secondary">Voltar</a>
 </form>
+
+<!-- Scripts para autocomplete -->
+<!-- Primeiro carrega o jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Depois carrega o jQuery UI -->
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+
+    <!-- CSS do jQuery UI -->
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
+
+
+    <script>
+        $(document).ready(function() {
+        if ($.ui && $.ui.autocomplete) {
+            var autores = @Html.Raw(Json.Serialize(autores));
+            $("#AutorNome").autocomplete({
+                source: autores,
+                minLength: 1 // Número mínimo de caracteres para iniciar a busca
+            });
+        } else {
+            console.error("jQuery UI não está carregado corretamente.");
+        }
+        });
+    </script>

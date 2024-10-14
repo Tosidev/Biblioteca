@@ -40,6 +40,19 @@ namespace Biblioteca.Controllers
         // GET: Livro/Create
         public IActionResult Create()
         {
+            // Carregar todos os autores para o dropdown
+            ViewData["Autores"] = _context.Autores.Select(a => a.Nome).ToList();
+
+            // Carregar a lista de descrição dos assuntos
+            var assuntos = _context.Assuntos.Select(a => a.Descricao).ToList();
+            
+            if (assuntos == null || !assuntos.Any())
+            {
+                return NotFound("Nenhum assunto encontrado.");
+            }
+            
+            ViewData["Assuntos"] = assuntos;
+
             return View();
         }
 
@@ -59,14 +72,24 @@ namespace Biblioteca.Controllers
                 _context.Autores.Add(autor);
                 await _context.SaveChangesAsync();
 
-                // Adicionar o novo assunto
-                var assunto = new Assunto
+                // Verifique se o assunto já existe
+                var assuntoExistente = _context.Assuntos.FirstOrDefault(a => a.Descricao == NovoAssunto);
+                Assunto assunto;
+                if (assuntoExistente == null)
                 {
-                    Descricao = NovoAssunto,
-                    LivroAssuntos = new List<LivroAssunto>()
-                };
-                _context.Assuntos.Add(assunto);
-                await _context.SaveChangesAsync();
+                    // Adicionar o novo assunto
+                    assunto = new Assunto
+                    {
+                        Descricao = NovoAssunto,
+                        LivroAssuntos = new List<LivroAssunto>()
+                    };
+                    _context.Assuntos.Add(assunto);
+                    await _context.SaveChangesAsync();
+                }
+                else
+                {
+                    assunto = assuntoExistente;
+                }
 
                 // Relacionar o autor e o assunto com o livro
                 livro.LivroAutores = new List<LivroAutor>
@@ -107,7 +130,7 @@ namespace Biblioteca.Controllers
             return View(livro);
         }
 
-        // GET: Livro/Edit/5
+        // GET: Livro/Edit/
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -129,6 +152,10 @@ namespace Biblioteca.Controllers
                 return NotFound();
             }
 
+            //Retorne os autores cadastrados
+            ViewData["Autores"] = _context.Autores.Select(a => a.Nome).ToList();
+            ViewData["AutorAtual"] = livro.LivroAutores.FirstOrDefault()?.Autor?.Nome;
+
             // Verificar se há preços e definir os valores em ViewData
             ViewData["FormaCompra"] = livro.Precos.FirstOrDefault()?.FormaCompra;
             ViewData["Preco"] = livro.Precos.FirstOrDefault()?.Valor;
@@ -136,7 +163,7 @@ namespace Biblioteca.Controllers
             return View(livro);
         }
 
-        // POST: Livro/Edit/5
+        // POST: Livro/Edit/
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Livro livro, string AutorNome, string AssuntoDescricao, string FormaCompra, string Preco)
@@ -250,10 +277,17 @@ namespace Biblioteca.Controllers
             // Manter o valor do preço no ViewData em caso de erro
             ViewData["Preco"] = Preco;
             ViewData["PrecoError"] = "Por favor, insira um valor válido.";
+
+            // Carregar as listas de autores e assuntos novamente para renderizar a página com os valores corretos
+            ViewData["Autores"] = _context.Autores.Select(a => a.Nome).ToList();
+            ViewData["FormaCompra"] = FormaCompra; // Carrega o valor da Forma de Compra que foi tentado            
+            ViewData["AutorAtual"] = AutorNome; // Carrega o nome do autor selecionado
+            ViewData["AssuntoDescricao"] = AssuntoDescricao; // Carrega o assunto digitado
+            
             return View(livro);
         }
 
-        // GET: Livro/Delete/5
+        // GET: Livro/Delete/
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -277,7 +311,7 @@ namespace Biblioteca.Controllers
             return View(livro);
         }
 
-        // POST: Livro/Delete/5
+        // POST: Livro/Delete/
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -307,7 +341,7 @@ namespace Biblioteca.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: Livro/Details/5
+        // GET: Livro/Details/
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
