@@ -4,6 +4,10 @@
     ViewData["Title"] = "Editar Livro";
     var autores = ViewData["Autores"] as List<string> ?? new List<string>(); // Garante que autores nunca será nulo
     var autorAtual = ViewData["AutorAtual"] as string;
+
+    var assuntos = ViewData["Assuntos"] as List<string> ?? new List<string>(); // Garante que assuntos nunca será nulo
+    var assuntoAtual = ViewData["AssuntoAtual"] as string;
+
 }
 
 <h1>Editar Livro</h1>
@@ -42,8 +46,16 @@
     </div>-->
 
     <div class="form-group">
-        <label>Assunto</label>
-        <input name="AssuntoDescricao" value="@Model.LivroAssuntos.FirstOrDefault()?.Assunto?.Descricao" class="form-control" />
+        <label for="AssuntoDescricao" class="control-label">Assunto</label>
+        <!--<input name ="AssuntoDescricao" name="AssuntoDescricao" class="form-control">-->
+        <select id="AssuntoDescricao" name="AssuntoDescricao" class="form-control">
+            <!-- Exibe o valor atual salvo no banco de dados como a primeira opção -->
+            <option value="">@assuntoAtual</option>
+            @foreach (var assunto in assuntos)
+            {
+                <option value="@assunto">@assunto</option>
+            }
+        </select>
     </div>
 
     <div class="form-group">

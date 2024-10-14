@@ -156,6 +156,10 @@ namespace Biblioteca.Controllers
             ViewData["Autores"] = _context.Autores.Select(a => a.Nome).ToList();
             ViewData["AutorAtual"] = livro.LivroAutores.FirstOrDefault()?.Autor?.Nome;
 
+            // Retorne os assuntos cadastrados e o assunto atual do livro
+            ViewData["Assuntos"] = _context.Assuntos.Select(a => a.Descricao).ToList();
+            ViewData["AssuntoAtual"] = livro.LivroAssuntos.FirstOrDefault()?.Assunto?.Descricao;
+
             // Verificar se há preços e definir os valores em ViewData
             ViewData["FormaCompra"] = livro.Precos.FirstOrDefault()?.FormaCompra;
             ViewData["Preco"] = livro.Precos.FirstOrDefault()?.Valor;
@@ -256,6 +260,10 @@ namespace Biblioteca.Controllers
 
                     _context.Update(livro);
                     await _context.SaveChangesAsync();
+                    
+                    TempData["SuccessMessage"] = "Livro editado com sucesso!";
+                    return RedirectToAction(nameof(Index));
+
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -269,9 +277,8 @@ namespace Biblioteca.Controllers
                     }
                 }
                 
-                TempData["SuccessMessage"] = "Livro editado com sucesso!";
-                
-                return RedirectToAction(nameof(Index));
+                //TempData["SuccessMessage"] = "Livro editado com sucesso!";                
+                //return RedirectToAction(nameof(Index));
             }
 
             // Manter o valor do preço no ViewData em caso de erro
@@ -280,6 +287,8 @@ namespace Biblioteca.Controllers
 
             // Carregar as listas de autores e assuntos novamente para renderizar a página com os valores corretos
             ViewData["Autores"] = _context.Autores.Select(a => a.Nome).ToList();
+            ViewData["Assuntos"] = _context.Assuntos.Select(a => a.Descricao).ToList();            
+            
             ViewData["FormaCompra"] = FormaCompra; // Carrega o valor da Forma de Compra que foi tentado            
             ViewData["AutorAtual"] = AutorNome; // Carrega o nome do autor selecionado
             ViewData["AssuntoDescricao"] = AssuntoDescricao; // Carrega o assunto digitado
