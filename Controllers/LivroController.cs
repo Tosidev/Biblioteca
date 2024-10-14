@@ -43,15 +43,8 @@ namespace Biblioteca.Controllers
             // Carregar todos os autores para o dropdown
             ViewData["Autores"] = _context.Autores.Select(a => a.Nome).ToList();
 
-            // Carregar a lista de descrição dos assuntos
-            var assuntos = _context.Assuntos.Select(a => a.Descricao).ToList();
-            
-            if (assuntos == null || !assuntos.Any())
-            {
-                return NotFound("Nenhum assunto encontrado.");
-            }
-            
-            ViewData["Assuntos"] = assuntos;
+            // Carregar a lista de descrição dos assuntos 
+            ViewData["Assuntos"] = _context.Assuntos.Select(a => a.Descricao).ToList();
 
             return View();
         }
@@ -63,14 +56,25 @@ namespace Biblioteca.Controllers
         {
             if (ModelState.IsValid)
             {
-                // Adicionar o novo autor
-                var autor = new Autor
+                // Verificar se o autor já existe
+                var autorExistente = _context.Autores.FirstOrDefault(a => a.Nome == NovoAutor);
+                Autor autor;
+                if (autorExistente == null)
                 {
-                    Nome = NovoAutor,
-                    LivrosAutores = new List<LivroAutor>()
-                };
-                _context.Autores.Add(autor);
-                await _context.SaveChangesAsync();
+                    // Adicionar o novo autor
+                    autor = new Autor
+                    {
+                        Nome = NovoAutor,
+                        LivrosAutores = new List<LivroAutor>()
+                    };
+                    _context.Autores.Add(autor);
+                    await _context.SaveChangesAsync(); // Salvar o novo autor
+                }
+                else
+                {
+                    // Reutilizar o autor existente
+                    autor = autorExistente;
+                }
 
                 // Verifique se o assunto já existe
                 var assuntoExistente = _context.Assuntos.FirstOrDefault(a => a.Descricao == NovoAssunto);
@@ -372,62 +376,41 @@ namespace Biblioteca.Controllers
             return View(livro);
         }
 
-        // Método para gerar o relatório em PDF
-        public async Task<IActionResult> GerarRelatorioPdf()
+    // Método para gerar um PDF mínimo de teste
+    public IActionResult GerarRelatorioPdf()
+    {
+        // Definir o caminho para salvar o arquivo PDF no diretório temporário
+        string tempPath = Path.GetTempPath();
+        string pdfPath = Path.Combine(tempPath, $"RelatorioTeste_{DateTime.Now:yyyyMMdd_HHmmss}.pdf");
+
+        try
         {
-                // Definir o caminho para salvar o arquivo PDF no desktop com um identificador exclusivo
-                string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-                string pdfPath = Path.Combine(desktopPath, $"RelatorioAutorLivros_{DateTime.Now:yyyyMMdd_HHmmss}.pdf"); // (Desenvolvimento crítico, cria o pdf mas dá erro)
+            // Criar um PDF simples
+            using (var writer = new PdfWriter(pdfPath))
+            using (var pdfDoc = new PdfDocument(writer))
+            {
+                Document document = new Document(pdfDoc);
+                document.Add(new Paragraph("Este é um PDF de teste."));
 
-                // Este try-catch utilizado para capturar capturar quaisquer exceções que possam ocorrer durante o processo de geração do PDF e retornar uma mensagem de erro amigável caso algo dê errado
-                try
-                {
-                    // Criar o PDF usando iTextSharp
-                    using (var writer = new PdfWriter(pdfPath))
-                    {
-                        using (var pdfDoc = new PdfDocument(writer))
-                        {
-                            Document document = new Document(pdfDoc);
-                            
-                            // Adicionar título ao PDF
-                            document.Add(new Paragraph("Relatório de Livros por Autor"));
-
-                            // Buscar os dados do banco
-                            var livros = await _context.VwAutorLivros.ToListAsync();
-
-                            // Adicionar os dados ao PDF
-                            foreach (var livro in livros)
-                            {                    
-                                document.Add(new Paragraph($"Autor: {livro.Autor}"));
-                                document.Add(new Paragraph($"Título: {livro.Titulo}"));
-                                document.Add(new Paragraph($"Assunto: {livro.Assunto}"));
-                            }
-
-                            document.Close();
-                        }
-                    }
-
-                    // Ler o arquivo PDF e retornar o conteúdo como uma resposta
-                    var fileBytes = System.IO.File.ReadAllBytes(pdfPath);
-
-                    // Remover o arquivo temporário após ler o conteúdo
-                    System.IO.File.Delete(pdfPath);
-
-                    return File(fileBytes, "application/pdf", "RelatorioAutorLivros.pdf");
-                }
-                catch (Exception ex)
-                {
-                    // Tratar erros de geração de PDF
-                    return Content($"Erro ao gerar o PDF: {ex.Message}");
-                }
+                document.Close(); // Fechar o documento
             }
-    
+
+            // Ler o arquivo PDF e retornar o conteúdo como uma resposta
+            var fileBytes = System.IO.File.ReadAllBytes(pdfPath);
+            return File(fileBytes, "application/pdf", "RelatorioTeste.pdf");
+        }
+        catch (Exception ex)
+        {
+            return Content($"Erro ao gerar o PDF: {ex.Message}\nDetalhes: {ex.StackTrace}");
+        }
+    }
+
         // GET: Autor/CreateAutor
         // Novo método para exibir a página de cadastro de autores
         public IActionResult CreateAutor()
         {
             // Carregar todos os autores para exibição na tabela
-            var autores = _context.Autores.Select(a => a.Nome).ToList();
+            var autores = _context.Autores.ToList();
             ViewData["Autores"] = autores;
 
             return View();
@@ -472,7 +455,7 @@ namespace Biblioteca.Controllers
         public IActionResult CreateAssunto()
         {
             // Carregar todos os assuntos para exibição na tabela
-            var assuntos = _context.Assuntos.Select(a => a.Descricao).ToList();
+            var assuntos = _context.Assuntos.ToList();
             ViewData["Assuntos"] = assuntos;
 
             return View();

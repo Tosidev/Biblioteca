@@ -1,6 +1,7 @@
+@model List<Biblioteca.Models.Assunto>
 @{
     ViewData["Title"] = "Cadastrar Assunto";
-    var assuntos = ViewData["Assuntos"] as List<string> ?? new List<string>(); // Garante que assuntos nunca será nulo
+    var assuntos = ViewData["Assuntos"] as List<Biblioteca.Models.Assunto>; // Lista de objetos Assunto
 }
 
 <h1>Cadastrar Assunto</h1>
@@ -38,6 +39,7 @@
     <table class="table">
         <thead>
             <tr>
+                <th>ID do Assunto</th>
                 <th>Nome do Assunto</th>
             </tr>
         </thead>
@@ -45,7 +47,8 @@
             @foreach (var assunto in assuntos)
             {
                 <tr>
-                    <td>@assunto</td>
+                    <td>@assunto.AssuntoId</td> <!-- Exibe o ID do Assunto -->
+                    <td>@assunto.Descricao</td>  <!-- Exibe o Nome do Assunto -->
                 </tr>
             }
         </tbody>

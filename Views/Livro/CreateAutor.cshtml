@@ -1,6 +1,7 @@
+@model List<Biblioteca.Models.Autor>
 @{
     ViewData["Title"] = "Cadastrar Autor";
-    var autores = ViewData["Autores"] as List<string> ?? new List<string>(); // Garante que autores nunca será nulo
+    var autores = ViewData["Autores"] as List<Biblioteca.Models.Autor>; // Lista de objetos Autor
 }
 
 <h1>Cadastrar Autor</h1>
@@ -39,6 +40,7 @@
     <table class="table">
         <thead>
             <tr>
+                <th>ID do Autor</th>
                 <th>Nome do Autor</th>
             </tr>
         </thead>
@@ -46,7 +48,8 @@
             @foreach (var autor in autores)
             {
                 <tr>
-                    <td>@autor</td>
+                    <td>@autor.AutorId</td> <!-- Exibe o ID do Autor -->
+                    <td>@autor.Nome</td>    <!-- Exibe o Nome do Autor -->>
                 </tr>
             }
         </tbody>
