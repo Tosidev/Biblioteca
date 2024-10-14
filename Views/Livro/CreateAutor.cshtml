@@ -1,0 +1,58 @@
+@{
+    ViewData["Title"] = "Cadastrar Autor";
+    var autores = ViewData["Autores"] as List<string> ?? new List<string>(); // Garante que autores nunca será nulo
+}
+
+<h1>Cadastrar Autor</h1>
+
+<!-- Exibir mensagem de sucesso -->
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+<form asp-action="CreateAutor" method="post">
+    <div class="form-group">
+        <label for="NovoAutor" class="control-label">Nome do Autor</label>
+        <input type="text" id="NovoAutor" name="NovoAutor" class="form-control" />
+
+        <!-- Exibir a mensagem de erro manualmente com verificação para evitar nulidade -->
+        @if (ViewData.ModelState.ContainsKey("NovoAutor") && ViewData.ModelState["NovoAutor"].Errors.Count > 0)
+        {
+            <span class="text-danger">@ViewData.ModelState["NovoAutor"].Errors[0].ErrorMessage</span>
+        }
+    </div>
+
+    <button type="submit" class="btn btn-primary">Cadastrar Autor</button>
+    <a asp-action="Index" class="btn btn-secondary">Voltar</a>
+</form>
+
+
+<hr />
+
+<!-- Exibir a tabela com todos os autores já cadastrados -->
+<h2>Autores Cadastrados</h2>
+@if (autores.Any()) // Verifica se há autores antes de renderizar a tabela
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nome do Autor</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var autor in autores)
+            {
+                <tr>
+                    <td>@autor</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>Nenhum autor cadastrado.</p>
+}

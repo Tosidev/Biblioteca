@@ -421,6 +421,53 @@ namespace Biblioteca.Controllers
                     return Content($"Erro ao gerar o PDF: {ex.Message}");
                 }
             }
+    
+        // GET: Autor/CreateAutor
+        // Novo método para exibir a página de cadastro de autores
+        public IActionResult CreateAutor()
+        {
+            // Carregar todos os autores para exibição na tabela
+            var autores = _context.Autores.Select(a => a.Nome).ToList();
+            ViewData["Autores"] = autores;
+
+            return View();
         }
+
+        // POST: Autor/CreateAutor
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateAutor(string NovoAutor)
+        {
+            // Verifique se o nome do autor já existe
+            var autorExistente = _context.Autores.FirstOrDefault(a => a.Nome == NovoAutor);
+
+            if (autorExistente != null)
+            {
+                // Mensagem de erro se o autor já existir
+                ModelState.AddModelError("DuplicatedAutor", "Esse autor já existe.");
+                ViewData["Autores"] = _context.Autores.Select(a => a.Nome).ToList();
+                return View();
+            }
+
+            if (ModelState.IsValid)
+            {
+                // Criar e salvar o novo autor
+                var novoAutor = new Autor
+                {
+                    Nome = NovoAutor
+                };
+                _context.Autores.Add(novoAutor);
+                await _context.SaveChangesAsync();
+
+                TempData["SuccessMessage"] = "Autor cadastrado com sucesso!";
+                return RedirectToAction(nameof(CreateAutor));
+            }
+
+            ViewData["Autores"] = _context.Autores.Select(a => a.Nome).ToList();
+            return View();
+        }
+
+    
+    }
 
 }
